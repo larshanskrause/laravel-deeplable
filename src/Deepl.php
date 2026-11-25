@@ -56,7 +56,6 @@ class Deepl
 
         $body = array_merge(
             [
-                'auth_key'        => $this->apiToken,
                 'text'            => $string,
                 'source_language' => strtoupper($sourceLanguage ?: $this->fallbackLocale),
                 'target_lang'     => strtoupper($targetLang),
@@ -66,6 +65,8 @@ class Deepl
 
         $content = $this->apiCall('POST', 'translate', [
             'query' => $body,
+            // DeepL requires the key in the Authorization header (the auth_key parameter is rejected)
+            'headers' => ['Authorization' => 'DeepL-Auth-Key '.$this->apiToken],
         ]);
 
         $translation = $content['translations'][0]['text'];
